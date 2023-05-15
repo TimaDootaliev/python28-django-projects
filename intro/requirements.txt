@@ -1,0 +1,6 @@
+# framework
+django
+# надстройка над django
+djangorestframework
+# драйвер для постгрес
+psycopg2-binary
