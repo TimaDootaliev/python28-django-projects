@@ -21,4 +21,3 @@ class ProductCreateSerializer(serializers.Serializer):
         print('SERIALIZER', validated_data)
         return Product.objects.create(**validated_data)
         # INSERT INTO table ...
-

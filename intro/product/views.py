@@ -46,12 +46,5 @@ def delete_product(request: Request, id):
 
 
 # TODO: update product
-    
-
-
-
-
-
-
 
 # TODO: разверните 3 проекта и залейте на 3 разных репозитория на гитхаб

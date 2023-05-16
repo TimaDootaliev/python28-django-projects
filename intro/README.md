@@ -106,3 +106,63 @@ class Product(models.Model):
 ```
 
 ### провести миграции
+
+### создать файл serializers.py в папке с приложением, в котором будет проходить сериализация и проверка данных
+
+```python
+from rest_framework import serializers
+
+
+class ProductSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    title = serializers.CharField(max_length=200)
+    description = serializers.CharField()
+    price = serializers.DecimalField(max_digits=10, decimal_places=2)
+    in_stock = serializers.BooleanField()
+```
+
+### в файле views.py создать функцию для отображения данных
+
+```python
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.request import Request
+
+from .models import Product
+from .serializers import ProductSerializer
+
+
+@api_view(['GET']) # с помощью декоратора указываем метод запроса
+def get_products(request: Request): 
+    queryset = Product.objects.all() # отправка запроса в БД
+    # SELECT * FROM product;
+    serializer = ProductSerializer(queryset, many=True) # сериализуем полученные данные.
+    return Response(serializer.data) # отдаем ответ в виде сериализованных данных
+```
+
+### создаем файл urls.py в папке с приложением
+
+```python
+from django.urls import path # функция для генерации ссылок/путей
+
+from .views import get_products 
+
+
+urlpatterns = [
+    path('products/', get_products), 
+    # список продуктов будет доступен по ссылке http://hostname/products/
+]
+```
+
+### в файле urls.py в папке <project_name>
+
+```python
+from django.contrib import admin
+from django.urls import path, include # this
+
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('product.urls')) # this
+]
+```
