@@ -48,7 +48,7 @@ DATABASES = {
 
 ```bash
 python3 manage.py runserver
-или
+# или
 ./manage.py runserver
 ```
 
