@@ -10,20 +10,16 @@ class ToDoSerializer(serializers.ModelSerializer):
         # exclude = ['updated_at'] # список полей для исключения
 
 
-obj = {
-    'id': 1,
-    'title': 'asdf',
-    'status': 'done'
-}
+class ToDoCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ToDo
+        exclude = ['id']
+        read_only_fields = ['created_at', 'updated_at']
 
-# PUT
-{
-    'id': 1,
-    'title': 'new_title',
-    'status': 'not completed'
-}
 
-# PATCH
-{
-    'title': 'new_title'
-}
+class ToDoUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ToDo
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at', 'updated_at']
+    

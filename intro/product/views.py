@@ -1,3 +1,4 @@
+from rest_framework import serializers
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.request import Request
@@ -43,6 +44,16 @@ def delete_product(request: Request, id):
     title = product.title
     product.delete()
     return Response({'message': f'Product with {title} id successfully deleted'}, status=204)
+
+
+@api_view(['PUT'])
+def update_product(request: Request, id):
+    query = Product.objects.get(id=id)
+    product = get_object_or_404(query)
+    serializer = ProductSerializer(query, data=request.data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data)
 
 
 # TODO: update product

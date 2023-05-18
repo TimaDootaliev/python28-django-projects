@@ -11,14 +11,14 @@ class ToDo(models.Model):
         ('IP', 'In proccess'),
         ('D', 'Done')
     )
-
+    
     user = models.ForeignKey(
         to=User,
         on_delete=models.CASCADE
     )
     title = models.CharField(
         verbose_name='Название',
-        max_length=100
+        max_length=100,
     ) # VARCHAR
     description = models.TextField(blank=True)
     status = models.CharField(max_length=20, choices=STATUSES)
