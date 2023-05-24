@@ -11,7 +11,7 @@ class ToDo(models.Model):
         ('IP', 'In proccess'),
         ('D', 'Done')
     )
-    
+
     user = models.ForeignKey(
         to=User,
         on_delete=models.CASCADE
@@ -19,7 +19,7 @@ class ToDo(models.Model):
     title = models.CharField(
         verbose_name='Название',
         max_length=100,
-    ) # VARCHAR
+    )  # VARCHAR
     description = models.TextField(blank=True)
     status = models.CharField(max_length=20, choices=STATUSES)
     created_at = models.DateTimeField(
@@ -32,19 +32,14 @@ class ToDo(models.Model):
 
     def __str__(self):
         return self.title
-    
+
     class Meta:
         verbose_name = 'Задача'
         verbose_name_plural = 'Задачи'
         ordering = ['-created_at']
-    
 
 
-
-
-
-
-"""  
+"""
 1. Написать модель в models.py
 2. Провести миграции - отправить модель в бд
 3. Добавить модель в админку (admin.py)

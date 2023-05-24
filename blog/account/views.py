@@ -1,7 +1,11 @@
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, DestroyAPIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import RegistrationSerializer, ActivationSerializer
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
+
+from .serializers import RegistrationSerializer, ActivationSerializer, LoginSerializer
 
 
 class RegistrationView(CreateAPIView):
@@ -20,4 +24,18 @@ class ActivationView(CreateAPIView):
             status=status.HTTP_202_ACCEPTED
             )
 
+
+class LoginView(ObtainAuthToken):
+    serializer_class = LoginSerializer
+
+
+class LogoutView(DestroyAPIView): 
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request):
+        Token.objects.get(user=request.user).delete()
+        return Response(
+            {'message': 'Logged Out'},
+            status=status.HTTP_204_NO_CONTENT
+        )
 

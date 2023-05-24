@@ -33,7 +33,7 @@ class ToDoUpdateView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-    
+
 
 class ToDoDeleteView(APIView):
     def delete(self, request: Request, pk):

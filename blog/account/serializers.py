@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework import status
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 from .utils import send_activation_code, create_activation_code
 
 
@@ -53,3 +53,38 @@ class ActivationSerializer(serializers.Serializer):
         user.is_active = True
         user.activation_code = ''
         user.save()
+
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField(max_length=100)
+    password = serializers.CharField(max_length=128)
+
+    def validate_username(self, username):
+        user = User.objects.filter(username=username).exists()
+        if not user:
+            raise serializers.ValidationError(
+                {'message': f'User with {username} username not found'},
+                code=status.HTTP_400_BAD_REQUEST
+            )
+        return username
+    
+    def validate(self, attrs: dict):
+        request = self.context.get('request')
+        username = attrs.get('username')
+        password = attrs.get('password')
+        if not (username and password):
+            raise serializers.ValidationError(
+                {'message': 'Username and password are required'},
+                code=status.HTTP_400_BAD_REQUEST
+            )
+        user = authenticate(
+            username=username,
+            password=password,
+            request=request
+            )
+        if user is None:
+            raise serializers.ValidationError(
+                {'message': 'Неправильно указан username или password'}
+            )
+        attrs['user'] = user
+        return attrs
