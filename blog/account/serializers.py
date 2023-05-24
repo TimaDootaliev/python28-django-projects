@@ -88,3 +88,7 @@ class LoginSerializer(serializers.Serializer):
             )
         attrs['user'] = user
         return attrs
+
+
+# TODO: изменение пароля
+# TODO: восстановление пароля
