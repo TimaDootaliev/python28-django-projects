@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
+
 # Create your models here.
 
 
@@ -15,12 +16,12 @@ class CustomUserManager(BaseUserManager):
 
     def create_user(self, username, email, password, **extra_fields):
         extra_fields.setdefault("is_active", False)
-        extra_fields.setdefault('is_staff', False)
+        extra_fields.setdefault("is_staff", False)
         return self._create(username, email, password, **extra_fields)
-    
+
     def create_superuser(self, username, email, password, **extra_fields):
         extra_fields.setdefault("is_active", True)
-        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault("is_staff", True)
         return self._create(username, email, password, **extra_fields)
 
 
@@ -32,16 +33,16 @@ class CustomUser(AbstractBaseUser):
     activation_code = models.CharField(max_length=10, blank=True)
 
     REQUIRED_FIELDS = ["email"]
-    USERNAME_FIELD = 'username'
+    USERNAME_FIELD = "username"
 
     objects = CustomUserManager()
 
     def has_module_perms(self, app_label):
         return self.is_staff
-    
+
     def has_perm(self, obj=None):
         return self.is_staff
-    
+
     class Meta:
-        verbose_name = 'Пользователь'
+        verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"

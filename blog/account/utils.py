@@ -13,9 +13,9 @@ def send_activation_code(user):
     Спасибо за регистрацию! Ваш код активации {user.activation_code}
     """
     send_mail(
-        subject='Активация аккаунта',
+        subject="Активация аккаунта",
         message=message,
         from_email=settings.EMAIL_HOST_USER,
         recipient_list=[user.email],
-        fail_silently=False
+        fail_silently=False,
     )

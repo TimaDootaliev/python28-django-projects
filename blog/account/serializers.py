@@ -12,19 +12,18 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password', 'password_confirm')
+        fields = ("username", "email", "password", "password_confirm")
         extra_kwargs = {
-            'password': {'write_only': True},
+            "password": {"write_only": True},
         }
 
     # .is_valid()
     def validate(self, attrs: dict):
-        password = attrs.get('password')
-        password_confirm = attrs.pop('password_confirm')
+        password = attrs.get("password")
+        password_confirm = attrs.pop("password_confirm")
         if password != password_confirm:
             raise serializers.ValidationError(
-                {'message': 'Пароли не совпадают'},
-                code=status.HTTP_400_BAD_REQUEST
+                {"message": "Пароли не совпадают"}, code=status.HTTP_400_BAD_REQUEST
             )
         return attrs
 
@@ -44,14 +43,15 @@ class ActivationSerializer(serializers.Serializer):
         if code_exists:
             return activation_code
         raise serializers.ValidationError(
-            {'message': 'Неправильно указан код активации'},
-            code=status.HTTP_400_BAD_REQUEST)
+            {"message": "Неправильно указан код активации"},
+            code=status.HTTP_400_BAD_REQUEST,
+        )
 
     def activate(self):
-        code = self.validated_data.get('activation_code')
+        code = self.validated_data.get("activation_code")
         user = User.objects.get(activation_code=code)
         user.is_active = True
-        user.activation_code = ''
+        user.activation_code = ""
         user.save()
 
 
@@ -63,30 +63,26 @@ class LoginSerializer(serializers.Serializer):
         user = User.objects.filter(username=username).exists()
         if not user:
             raise serializers.ValidationError(
-                {'message': f'User with {username} username not found'},
-                code=status.HTTP_400_BAD_REQUEST
+                {"message": f"User with {username} username not found"},
+                code=status.HTTP_400_BAD_REQUEST,
             )
         return username
-    
+
     def validate(self, attrs: dict):
-        request = self.context.get('request')
-        username = attrs.get('username')
-        password = attrs.get('password')
+        request = self.context.get("request")
+        username = attrs.get("username")
+        password = attrs.get("password")
         if not (username and password):
             raise serializers.ValidationError(
-                {'message': 'Username and password are required'},
-                code=status.HTTP_400_BAD_REQUEST
+                {"message": "Username and password are required"},
+                code=status.HTTP_400_BAD_REQUEST,
             )
-        user = authenticate(
-            username=username,
-            password=password,
-            request=request
-            )
+        user = authenticate(username=username, password=password, request=request)
         if user is None:
             raise serializers.ValidationError(
-                {'message': 'Неправильно указан username или password'}
+                {"message": "Неправильно указан username или password"}
             )
-        attrs['user'] = user
+        attrs["user"] = user
         return attrs
 
 
