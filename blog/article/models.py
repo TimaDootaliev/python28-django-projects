@@ -22,7 +22,9 @@ class Article(models.Model):
     status = models.CharField(
         max_length=10, choices=StatusChoices.choices, default="processing"
     )
-    image = models.ImageField(upload_to="articles")
+    image = models.ImageField(
+        upload_to="articles",
+    )
 
     def __str__(self):
         return self.title

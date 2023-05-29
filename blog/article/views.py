@@ -11,15 +11,15 @@ class ArticleViewSet(ModelViewSet):
     serializer_class = ArticleSerializer
 
     def get_permissions(self):
-        if self.request.method == 'GET':
+        if self.request.method == "GET":
             self.permission_classes = [AllowAny]
-        elif self.request.method == 'POST':
+        elif self.request.method == "POST":
             self.permission_classes = [IsAuthenticated]
         else:
-            self.permission_classes = [IsAdminUser, IsAuthor]
+            self.permission_classes = [IsAuthor]
         return super().get_permissions()
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        context['TEST_KEY'] = 'TEST_VALUE'
+        context["TEST_KEY"] = "TEST_VALUE"
         return context
