@@ -1,3 +1,31 @@
-from django.shortcuts import render
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 
-# Create your views here.
+from .serializers import CommentSerializer, RatingSerializer, FavoriteSerializer
+from .models import Comment, Rating, Favorite
+from permissions.permissions import IsAuthor
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            self.permission_classes = [IsAuthenticated]
+        elif self.request.method in ['DELETE', 'PATCH', 'PUT']:
+            self.permission_classes = [IsAuthor]
+        return super().get_permissions()
+    
+
+class RatingViewSet(viewsets.ModelViewSet):
+    queryset = Rating.objects.all()
+    serializer_class = RatingSerializer
+
+
+class FavoriteViewSet(viewsets.ModelViewSet):
+    serializer_class = FavoriteSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Favorite.objects.filter(user=self.request.user)

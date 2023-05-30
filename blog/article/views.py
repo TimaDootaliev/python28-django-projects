@@ -3,7 +3,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 
 from .serializers import ArticleSerializer
 from .models import Article, Tag
-from .permissions import IsAuthor
+from permissions.permissions import IsAuthor
 
 
 class ArticleViewSet(ModelViewSet):

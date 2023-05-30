@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     "rest_framework",
     "rest_framework.authtoken",
+    'drf_yasg',
 
     "account",
     "article",
@@ -158,4 +159,14 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
     ]
+}
+
+SWAGGER_SETTINGS = {
+   'SECURITY_DEFINITIONS': {
+      'Token': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+      }
+   }
 }

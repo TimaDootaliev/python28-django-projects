@@ -7,7 +7,7 @@ User = get_user_model()
 
 class AbstractModel(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    article = models.ForeignKey('article.Article', on_delete=models.CASCADE)
+    article = models.ForeignKey("article.Article", on_delete=models.CASCADE)
 
     class Meta:
         abstract = True
@@ -18,10 +18,10 @@ class Comment(AbstractModel):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'Comment {self.id} from {self.user.username}'
+        return f"Comment {self.id} from {self.user.username}"
 
     class Meta:
-        default_related_name = 'comments'
+        default_related_name = "comments"
 
 
 class RatingChoices(models.IntegerChoices):
@@ -39,13 +39,13 @@ class Rating(AbstractModel):
         return str(self.rate)
 
     class Meta:
-        default_related_name = 'ratings'
-        unique_together = ('user', 'article')
+        default_related_name = "ratings"
+        unique_together = ("user", "article")
 
 
 class Favorite(AbstractModel):
     pass
 
     class Meta:
-        default_related_name = 'favorites'
-        unique_together = ('user', 'article')
+        default_related_name = "favorites"
+        unique_together = ("user", "article")
