@@ -9,6 +9,8 @@ from permissions.permissions import IsAuthor
 class ArticleViewSet(ModelViewSet):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
+    filterset_fields = ['tag__title', 'status']
+    search_fields = ['title', 'text']
 
     def get_permissions(self):
         if self.request.method == "GET":
@@ -21,5 +23,4 @@ class ArticleViewSet(ModelViewSet):
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        context["TEST_KEY"] = "TEST_VALUE"
         return context

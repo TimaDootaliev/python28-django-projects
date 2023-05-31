@@ -21,12 +21,23 @@ class RatingSerializer(serializers.ModelSerializer):
         model = Rating
         fields = '__all__'
         read_only_fields = ['user']
-        validators = [
-            serializers.UniqueTogetherValidator(
-                queryset=Rating.objects.all(),
-                fields=['user', 'article']
-            )
-        ]
+        
+    def save(self, **kwargs):
+        user = self.context.get('request').user
+        self.validated_data['user'] = user
+        return super().save(**kwargs)
+    
+    def validate(self, attrs):
+        user = self.context.get('request').user
+        article = attrs.get('article')
+        rate = Rating.objects.filter(user=user, article=article)
+        if rate.exists():
+            raise serializers.ValidationError('Rate already exists')
+        return attrs
+    
+    def update(self, instance, validated_data):
+        print(validated_data['rate'])
+        return super().update(instance, validated_data)
 
 
 class FavoriteSerializer(serializers.ModelSerializer):

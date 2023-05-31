@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.mixins import CreateModelMixin, UpdateModelMixin
 
 from .serializers import CommentSerializer, RatingSerializer, FavoriteSerializer
 from .models import Comment, Rating, Favorite
@@ -18,9 +19,19 @@ class CommentViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
     
 
-class RatingViewSet(viewsets.ModelViewSet):
+class RatingViewSet(
+                CreateModelMixin, 
+                UpdateModelMixin, 
+                viewsets.GenericViewSet):
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            self.permission_classes = [IsAuthenticated]
+        else:
+            self.permission_classes = [IsAuthor]
+        return super().get_permissions()
 
 
 class FavoriteViewSet(viewsets.ModelViewSet):
@@ -29,3 +40,7 @@ class FavoriteViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Favorite.objects.filter(user=self.request.user)
+
+
+
+    

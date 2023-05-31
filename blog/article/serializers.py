@@ -1,7 +1,9 @@
 from rest_framework import serializers
 from typing import List
+from django.db.models import Avg
 
 from .models import Article, Tag
+from reviews.serializers import CommentSerializer
 
 
 class ArticleListSerializer(serializers.ListSerializer):
@@ -43,4 +45,6 @@ class ArticleSerializer(serializers.ModelSerializer):
     def to_representation(self, instance: Article):
         representation = super().to_representation(instance)
         representation['tag'] = [tag.title for tag in instance.tag.all()]
+        representation['comments'] = CommentSerializer(instance.comments.all(), many=True).data
+        representation['rating'] = round(instance.ratings.aggregate(Avg('rate'))['rate__avg'] or 0, 1)
         return representation

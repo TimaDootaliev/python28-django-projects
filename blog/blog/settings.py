@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     'drf_yasg',
+    'django_filters',
 
     "account",
     "article",
@@ -158,7 +159,14 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
-    ]
+    ],
+    'DATETIME_FORMAT': '%d-%m-%Y %H:%M',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 2,
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter'
+        ]
 }
 
 SWAGGER_SETTINGS = {
