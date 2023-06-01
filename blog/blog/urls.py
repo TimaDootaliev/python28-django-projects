@@ -39,6 +39,7 @@ urlpatterns = [
     path("api/v1/auth/", include("account.urls")),
     path("api/v1/", include("article.urls")),
     path('api/v1/', include('reviews.urls')),
+    path('web/', include('frontend.urls')),
 ]
 
 if settings.DEBUG:

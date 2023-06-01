@@ -19,3 +19,18 @@ def send_activation_code(user):
         recipient_list=[user.email],
         fail_silently=False,
     )
+
+
+def send_drop_password_code(email, code):
+    message = f"""
+    Введите указанный код для сброса пароля: {code}
+
+    Если это были не Вы игнорируйте это сообщение
+    """
+    send_mail(
+        subject='Cброс пароля',
+        message=message,
+        from_email=settings.EMAIL_HOST_USER,
+        recipient_list=[email],
+        fail_silently=False
+    )

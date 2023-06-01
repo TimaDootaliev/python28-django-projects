@@ -5,7 +5,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 
-from .serializers import RegistrationSerializer, ActivationSerializer, LoginSerializer
+from .serializers import RegistrationSerializer, ActivationSerializer, LoginSerializer, ChangePasswordSerializer
 
 
 class RegistrationView(CreateAPIView):
@@ -35,3 +35,15 @@ class LogoutView(DestroyAPIView):
         print(request.user.username)
         Token.objects.get(user=request.user).delete()
         return Response({"message": "Logged Out"}, status=status.HTTP_204_NO_CONTENT)
+
+
+class ChangePasswordView(CreateAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = ChangePasswordSerializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.set_new_password()
+        return Response({'message': 'Пароль успешно обновлен'}, status=status.HTTP_200_OK)
+
+

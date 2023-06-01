@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework import status
 from django.contrib.auth import get_user_model, authenticate
-from .utils import send_activation_code, create_activation_code
+from .utils import send_activation_code, create_activation_code, send_drop_password_code
 
 
 User = get_user_model()
@@ -86,5 +86,74 @@ class LoginSerializer(serializers.Serializer):
         return attrs
 
 
-# TODO: изменение пароля
+
+class ChangePasswordSerializer(serializers.Serializer):
+    current_password = serializers.CharField(max_length=128)
+    new_password = serializers.CharField(max_length=128)
+    password_confirm = serializers.CharField(max_length=128)
+
+    def validate_current_password(self, current_password):
+        user = self.context.get('request').user
+        if user.check_password(current_password):
+            return current_password
+        raise serializers.ValidationError('Wrong password')
+    
+    def validate(self, attrs: dict):
+        new_pass = attrs.get('new_password')
+        pass_confirm = attrs.get('password_confirm')
+        if new_pass != pass_confirm:
+            raise serializers.ValidationError('Пароли не совпадают')
+        return attrs
+    
+    def set_new_password(self):
+        new_password = self.validated_data.get('new_password')
+        user = self.context.get('request').user
+        user.set_password(new_password)
+        user.save()
+
+
+class DropPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=255)
+
+    def validate_email(self, email):
+        if not User.objects.filter(email=email).exists():
+            raise serializers.ValidationError('User with this email does not exist')
+        return email
+    
+    def send_activation_code(self):
+        email = self.validated_data.get('email')
+        user = User.objects.get(email=email)
+        create_activation_code(user)
+        send_drop_password_code(email, user.activation_code)
+
+
+class ChangeForgottenPassword(serializers.Serializer):
+    code = serializers.CharField(max_length=10)
+    new_password = serializers.CharField(max_length=128)
+    password_confirm = serializers.CharField(max_length=128)
+
+    def validate_code(self, code):
+        if not User.objects.filter(activation_code=code).exists():
+            raise serializers.ValidationError('Wrong code')
+        return code
+
+    def validate(self, attrs: dict):
+        new_pass = attrs.get('new_password')
+        pass_confirm = attrs.get('password_confirm')
+        if new_pass != pass_confirm:
+            raise serializers.ValidationError('Пароли не совпадают')
+        return attrs
+
+    def set_new_password(self):
+        code = self.validated_data.get('code')
+        new_password = self.validated_data.get('new_password')
+        user = User.objects.get(activation_code=code)
+        user.set_password(new_password)
+        user.activation_code = ''
+        user.save()
+
+
+
+
+
 # TODO: восстановление пароля
